@@ -8,6 +8,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Webservice {
-    @GET("2.0/{artist}")
-    Single<BaseArtistAlbum> getArtist(@Path("artist") String artist,@Query("method") String method, @Query("api_key") String apikey);
+    @GET("2.0/")
+    Single<BaseArtistAlbum> getArtist(@Query("method") String method,@Query("artist") String artist, @Query("api_key") String apikey,@Query("format") String format);
 }

@@ -12,16 +12,19 @@ public class RetrofitInstance {
     private static Retrofit retrofit;
 
     public static Retrofit getRetrofitInstance() {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .build();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(Constant.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(client)
-                .build();
+        if (retrofit == null) {
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(loggingInterceptor)
+                    .build();
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(Constant.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .client(client)
+                    .build();
+        }
         return retrofit;
     }
 

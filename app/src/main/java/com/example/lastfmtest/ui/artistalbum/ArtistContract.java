@@ -1,4 +1,4 @@
-package com.example.lastfmtest.ui;
+package com.example.lastfmtest.ui.artistalbum;
 
 import com.example.lastfmtest.model.BaseArtistAlbum;
 
