@@ -1,39 +1,30 @@
 package com.example.lastfmtest.presenter.artist;
 
-import android.util.Log;
-
 import com.example.lastfmtest.Constant.Constant;
 import com.example.lastfmtest.model.BaseArtistAlbum;
-import com.example.lastfmtest.network.RetrofitInstance;
-import com.example.lastfmtest.network.Webservice;
+import com.example.lastfmtest.network.ArtistAlbumWebservice;
 import com.example.lastfmtest.ui.artistalbum.ArtistContract;
 
-import io.reactivex.Single;
+import java.net.UnknownHostException;
+
 import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class ArtistPresenter implements ArtistContract.Presenter {
 
-    private Webservice webservice = RetrofitInstance.getRetrofitInstance().create(Webservice.class);
+    private ArtistAlbumWebservice artistAlbumWebservice;
     private ArtistContract.View view;
     private CompositeDisposable disposable;
 
-    public ArtistPresenter(ArtistContract.View view) {
+    public ArtistPresenter(ArtistContract.View view, ArtistAlbumWebservice artistAlbumWebservice) {
         this.view = view;
+        this.artistAlbumWebservice = artistAlbumWebservice;
     }
 
     @Override
     public void getArtist(String artist) {
-        getObservable(artist).subscribe(getObserver());
-    }
-
-    private Single<BaseArtistAlbum> getObservable(String artist) {
-        return webservice.getArtist(Constant.GET_TOP_ALBUM, artist, Constant.API_KEY, Constant.FORMAT)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        artistAlbumWebservice.searchArtist(Constant.GET_TOP_ALBUM, artist, Constant.API_KEY, Constant.FORMAT).subscribe(getObserver());
     }
 
     private SingleObserver<BaseArtistAlbum> getObserver() {
@@ -45,13 +36,16 @@ public class ArtistPresenter implements ArtistContract.Presenter {
 
             @Override
             public void onSuccess(BaseArtistAlbum baseArtistAlbum) {
-                Log.d("artistresponse", baseArtistAlbum.getTopalbums().getAlbum().get(0).getName());
                 view.displayArtist(baseArtistAlbum);
             }
 
             @Override
             public void onError(Throwable e) {
-                view.displayError(e.getLocalizedMessage());
+                if (e == new UnknownHostException()) {
+                    view.displayNoNetworkFound();
+                } else {
+                    view.displayError(e.getLocalizedMessage());
+                }
             }
         };
     }

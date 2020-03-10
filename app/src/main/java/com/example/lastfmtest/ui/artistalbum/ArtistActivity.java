@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lastfmtest.R;
 import com.example.lastfmtest.model.BaseArtistAlbum;
+import com.example.lastfmtest.network.RetrofitInstance;
 import com.example.lastfmtest.presenter.artist.ArtistPresenter;
 import com.example.lastfmtest.ui.albumdetails.AlbumDetailsActivity;
 
@@ -31,7 +32,7 @@ public class ArtistActivity extends AppCompatActivity implements ArtistContract.
         et_artistName = findViewById(R.id.et_artistName);
         rvAlbum = findViewById(R.id.rv_album);
         btn_go = findViewById(R.id.btn_go);
-        presenter = new ArtistPresenter(this);
+        presenter = new ArtistPresenter(this, RetrofitInstance.getRetrofitInstance());
         btn_go.setOnClickListener(view -> presenter.getArtist(et_artistName.getText().toString()));
         rvAlbum.setLayoutManager(new GridLayoutManager(ArtistActivity.this, 2));
     }
@@ -43,7 +44,6 @@ public class ArtistActivity extends AppCompatActivity implements ArtistContract.
                 Intent intent = new Intent(this, AlbumDetailsActivity.class);
                 intent.putExtra("albumName", album.getName());
                 intent.putExtra("playcount", album.getPlaycount());
-//                intent.putExtra("albumdetails",album);
                 intent.putExtra("artistnme", album.getArtist().getName());
                 intent.putExtra("albumimage", album.getImage().get(3).getText());
                 startActivity(intent);
@@ -56,7 +56,7 @@ public class ArtistActivity extends AppCompatActivity implements ArtistContract.
 
     @Override
     public void displayNoNetworkFound() {
-
+        Toast.makeText(ArtistActivity.this, "No Network Found", Toast.LENGTH_SHORT).show();
     }
 
     @Override

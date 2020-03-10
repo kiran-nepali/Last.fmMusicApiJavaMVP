@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitInstance {
     private static Retrofit retrofit;
 
-    public static Retrofit getRetrofitInstance() {
+    public static RestApiService getRetrofitInstance() {
         if (retrofit == null) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
@@ -25,8 +25,7 @@ public class RetrofitInstance {
                     .client(client)
                     .build();
         }
-        return retrofit;
+        Webservice webservice = retrofit.create(Webservice.class);
+        return new RestApiService(webservice);
     }
-
-
 }
